@@ -1,0 +1,58 @@
+definitions:
+  http.UserPayload:
+    properties:
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      owner:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - owner
+    - password
+    - username
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Greetings method (test method)
+      produces:
+      - application/json
+      responses: {}
+      summary: Greetings method
+      tags:
+      - greetings
+  /api/v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Crete a new user in jwt-authentication-service
+      parameters:
+      - description: New user payload
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.UserPayload'
+      summary: Create a new user
+      tags:
+      - user
+swagger: "2.0"
