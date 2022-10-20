@@ -6,14 +6,13 @@ import (
 )
 
 type User struct {
-	ID          int64     `json:"id"`
-	Username    string    `json:"username" validate:"required"`
-	Password    string    `json:"password" validate:"required"`
-	Email       string    `json:"email" validate:"required"`
-	Owner       string    `json:"owner" validate:"required"`
-	Description string    `json:"description,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          int64     `bson:"_id,omitempty"json:"id"`
+	Username    string    `bson:"name"json:"username"validate:"required"`
+	Password    string    `bson:"password"json:"password" validate:"required"`
+	Email       string    `bson:"email"json:"email" validate:"required"`
+	Description string    `bson:"description"json:"description,omitempty"`
+	UpdatedAt   time.Time `bson:"updated_at"json:"updated_at"`
+	CreatedAt   time.Time `bson:"created_at"json:"created_at"`
 }
 
 // UserUsecase represent the user's usecases

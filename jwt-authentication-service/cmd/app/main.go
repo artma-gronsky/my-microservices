@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	userHttpDelivary "github.com/artmadar/jwt-auth-service/user/delivery/http"
+	userHttpDelivery "github.com/artmadar/jwt-auth-service/user/delivery/http"
 	"github.com/artmadar/jwt-auth-service/user/delivery/http/middleware"
 	userRepo "github.com/artmadar/jwt-auth-service/user/repository/mongo"
+	"github.com/artmadar/jwt-auth-service/user/repository/mongo/db-configuration"
 	userUsecase "github.com/artmadar/jwt-auth-service/user/usecase"
 	"github.com/go-chi/chi"
 	"log"
@@ -16,6 +17,9 @@ import (
 const (
 	webPort          = 1963
 	timeoutInSeconds = 2
+	mongoUrl         = "mongodb://localhost:27017"
+	mongoUsername    = "mongoadmin"
+	mongoPassword    = "secret"
 )
 
 type AppConfig struct {
@@ -33,13 +37,16 @@ func (app *AppConfig) serve() {
 	middL := middleware.InitMiddleware()
 	mux.Use(middL.CORS)
 	mux.Use(middL.Heartbeat)
+	
+	client, cancel := db_configuration.GetMongoConnectedClient(mongoUrl, mongoUsername, mongoPassword)
+	defer cancel()
 
-	ur := userRepo.NewMongoUserRepository()
+	ur := userRepo.NewMongoUserRepository(client)
 
 	timeoutContext := time.Duration(timeoutInSeconds) * time.Second
 	uc := userUsecase.NewUserUsecase(ur, timeoutContext)
 
-	userHttpDelivary.NewUserHandler(mux, uc)
+	userHttpDelivery.NewUserHandler(mux, uc)
 
 	log.Println(fmt.Sprintf("JWT Authentication service is going to serve on port: %d\n", webPort))
 

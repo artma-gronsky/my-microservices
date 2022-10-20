@@ -52,11 +52,9 @@ func (h *userHandler) hello(w http.ResponseWriter, _ *http.Request) {
 }
 
 type UserPayload struct {
-	ID          int64  `json:"id"`
 	Username    string `json:"username" validate:"required"`
 	Password    string `json:"password" validate:"required"`
 	Email       string `json:"email" validate:"required"`
-	Owner       string `json:"owner" validate:"required"`
 	Description string `json:"description,omitempty"`
 }
 
@@ -72,6 +70,18 @@ type UserPayload struct {
 func (h *userHandler) store(w http.ResponseWriter, r *http.Request) {
 	var payload UserPayload
 	err := helpers.ReadJSON(w, r, &payload)
+
+	if err != nil {
+		helpers.ErrorJSON(w, err)
+	}
+
+	ctx := r.Context()
+	err = h.UserUsecase.Store(ctx, &domain.User{
+		Username:    payload.Username,
+		Password:    payload.Password,
+		Email:       payload.Email,
+		Description: payload.Description,
+	})
 
 	if err != nil {
 		helpers.ErrorJSON(w, err)
