@@ -16,7 +16,7 @@ import (
 // todo: move to config
 const (
 	webPort          = 1963
-	timeoutInSeconds = 2
+	timeoutInSeconds = 10
 	mongoUrl         = "mongodb://localhost:27017"
 	mongoUsername    = "mongoadmin"
 	mongoPassword    = "secret"
@@ -37,7 +37,7 @@ func (app *AppConfig) serve() {
 	middL := middleware.InitMiddleware()
 	mux.Use(middL.CORS)
 	mux.Use(middL.Heartbeat)
-	
+
 	client, cancel := db_configuration.GetMongoConnectedClient(mongoUrl, mongoUsername, mongoPassword)
 	defer cancel()
 

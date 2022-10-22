@@ -81,7 +81,10 @@ func GetStatusCode(err error) int {
 
 	log.Println(err)
 	switch err {
-	case domain.ErrBadParamInput:
+	case
+		domain.ErrBadParamInput,
+		domain.ErrUserWithEmailAlreadyExist,
+		domain.ErrUserWithUsernameAlreadyExist:
 		return http.StatusBadRequest
 	case domain.ErrInternalServerError:
 		return http.StatusInternalServerError

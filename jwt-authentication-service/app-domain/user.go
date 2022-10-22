@@ -6,8 +6,8 @@ import (
 )
 
 type User struct {
-	ID          int64     `bson:"_id,omitempty"json:"id"`
-	Username    string    `bson:"name"json:"username"validate:"required"`
+	ID          string    `bson:"_id,omitempty"json:"id"`
+	Username    string    `bson:"username"json:"username"validate:"required"`
 	Password    string    `bson:"password"json:"password" validate:"required"`
 	Email       string    `bson:"email"json:"email" validate:"required"`
 	Description string    `bson:"description"json:"description,omitempty"`
@@ -23,4 +23,5 @@ type UserUsecase interface {
 // UserRepository represent the user's repository contract
 type UserRepository interface {
 	Store(context.Context, *User) error
+	GetOneByOneOfFieldsValues(ctx context.Context, fieldsValues map[string]string) (*User, error)
 }
