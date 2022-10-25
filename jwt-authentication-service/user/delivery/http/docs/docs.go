@@ -65,14 +65,73 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/users/token": {
+            "post": {
+                "description": "Generate a new access token for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get token for user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.Credentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.TokenPayload"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "http.Credentials": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.TokenPayload": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "http.UserPayload": {
             "type": "object",
             "required": [
                 "email",
-                "owner",
                 "password",
                 "username"
             ],
@@ -81,12 +140,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "owner": {
                     "type": "string"
                 },
                 "password": {

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	domain "github.com/artmadar/jwt-auth-service/app-domain"
+	"github.com/artmadar/jwt-auth-service/app-domain/entities"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"strings"
@@ -22,8 +23,7 @@ func NewUserUsecase(a domain.UserRepository, timeout time.Duration) domain.UserU
 	}
 }
 
-func (u *userUsecase) Store(ctx context.Context, createUserRequest *domain.User) (err error) {
-
+func (u *userUsecase) Store(ctx context.Context, createUserRequest *entities.User) (err error) {
 	//todo: validate request model
 
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
@@ -48,7 +48,7 @@ func (u *userUsecase) Store(ctx context.Context, createUserRequest *domain.User)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(createUserRequest.Password), 12)
 
-	err = u.userRepo.Store(ctx, &domain.User{
+	err = u.userRepo.Store(ctx, &entities.User{
 		Username:    createUserRequest.Username,
 		Password:    string(hashedPassword),
 		Email:       createUserRequest.Email,
@@ -59,7 +59,7 @@ func (u *userUsecase) Store(ctx context.Context, createUserRequest *domain.User)
 	return
 }
 
-func (u *userUsecase) findEntryWithEmailOrUsername(ctx context.Context, username, email string) (*domain.User, error) {
+func (u *userUsecase) findEntryWithEmailOrUsername(ctx context.Context, username, email string) (*entities.User, error) {
 	fieldsValues := map[string]string{
 		"username": username,
 		"email":    email,

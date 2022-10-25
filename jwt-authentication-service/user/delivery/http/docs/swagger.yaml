@@ -1,13 +1,26 @@
 definitions:
+  http.Credentials:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  http.TokenPayload:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
   http.UserPayload:
     properties:
       description:
         type: string
       email:
-        type: string
-      id:
-        type: integer
-      owner:
         type: string
       password:
         type: string
@@ -15,7 +28,6 @@ definitions:
         type: string
     required:
     - email
-    - owner
     - password
     - username
     type: object
@@ -53,6 +65,28 @@ paths:
           schema:
             $ref: '#/definitions/http.UserPayload'
       summary: Create a new user
+      tags:
+      - user
+  /api/v1/users/token:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new access token for user
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/http.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.TokenPayload'
+      summary: Get token for user
       tags:
       - user
 swagger: "2.0"

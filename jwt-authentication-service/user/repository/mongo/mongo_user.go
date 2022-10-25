@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	domain "github.com/artmadar/jwt-auth-service/app-domain"
+	"github.com/artmadar/jwt-auth-service/app-domain/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,7 +18,7 @@ func NewMongoUserRepository(mongo *mongo.Client) domain.UserRepository {
 	return &mongoUserRepository{client: mongo}
 }
 
-func (m *mongoUserRepository) Store(ctx context.Context, user *domain.User) error {
+func (m *mongoUserRepository) Store(ctx context.Context, user *entities.User) error {
 	_, err := m.getUserCollection().InsertOne(ctx, user)
 
 	if err != nil {
@@ -28,7 +29,7 @@ func (m *mongoUserRepository) Store(ctx context.Context, user *domain.User) erro
 	return nil
 }
 
-func (m *mongoUserRepository) GetOneByOneOfFieldsValues(ctx context.Context, fieldsValues map[string]string) (*domain.User, error) {
+func (m *mongoUserRepository) GetOneByOneOfFieldsValues(ctx context.Context, fieldsValues map[string]string) (*entities.User, error) {
 	collection := m.getUserCollection()
 
 	//result := collection.FindOne(ctx, bson.M{}, options.FindOne().SetProjection(bson.M{"username": username}))
@@ -44,7 +45,7 @@ func (m *mongoUserRepository) GetOneByOneOfFieldsValues(ctx context.Context, fie
 		{"$or", pipeline},
 	})
 
-	var user domain.User
+	var user entities.User
 
 	switch result.Err() {
 	case mongo.ErrNoDocuments:
@@ -61,33 +62,34 @@ func (m *mongoUserRepository) GetOneByOneOfFieldsValues(ctx context.Context, fie
 
 	return &user, nil
 }
-func (m *mongoUserRepository) GetById(ctx context.Context, idHex string) (*domain.User, error) {
-	collection := m.getUserCollection()
-
-	objectId, err := primitive.ObjectIDFromHex(idHex)
-
-	if err != nil {
-		return nil, err
-	}
-
-	result := collection.FindOne(ctx, bson.M{"_id": objectId})
-
-	var entry domain.User
-
-	if err := result.Err(); err != nil {
-		return nil, err
-	}
-
-	err = result.Decode(&entry)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &entry, nil
-}
 
 func (m *mongoUserRepository) getUserCollection() *mongo.Collection {
 	collection := m.client.Database("jwtAuthenticationService").Collection("users")
 	return collection
 }
+
+//func (m *mongoUserRepository) GetById(ctx context.Context, idHex string) (*entities.User, error) {
+//	collection := m.getUserCollection()
+//
+//	objectId, err := primitive.ObjectIDFromHex(idHex)
+//
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	result := collection.FindOne(ctx, bson.M{"_id": objectId})
+//
+//	var entry entities.User
+//
+//	if err := result.Err(); err != nil {
+//		return nil, err
+//	}
+//
+//	err = result.Decode(&entry)
+//
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return &entry, nil
+//}

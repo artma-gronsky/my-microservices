@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	authenticationRepository "github.com/artmadar/jwt-auth-service/authentication/repository/mongo"
+	authenticationUsecase "github.com/artmadar/jwt-auth-service/authentication/usecase"
+	"github.com/artmadar/jwt-auth-service/authentication/usecase/generator"
 	userHttpDelivery "github.com/artmadar/jwt-auth-service/user/delivery/http"
 	"github.com/artmadar/jwt-auth-service/user/delivery/http/middleware"
 	userRepo "github.com/artmadar/jwt-auth-service/user/repository/mongo"
@@ -15,6 +18,8 @@ import (
 
 // todo: move to config
 const (
+	// todo: should be hidden somewhere
+	jwtSecretKey     = "SecretYouShouldHide"
 	webPort          = 1963
 	timeoutInSeconds = 10
 	mongoUrl         = "mongodb://localhost:27017"
@@ -46,7 +51,10 @@ func (app *AppConfig) serve() {
 	timeoutContext := time.Duration(timeoutInSeconds) * time.Second
 	uc := userUsecase.NewUserUsecase(ur, timeoutContext)
 
-	userHttpDelivery.NewUserHandler(mux, uc)
+	tr := authenticationRepository.NewMongoUserForAuthenticationRepository(client)
+	ac := authenticationUsecase.NewAuthenticationUsecase(tr, generator.NewGenerator(jwtSecretKey))
+
+	userHttpDelivery.NewUserHandler(mux, uc, ac)
 
 	log.Println(fmt.Sprintf("JWT Authentication service is going to serve on port: %d\n", webPort))
 

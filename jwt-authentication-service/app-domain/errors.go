@@ -11,7 +11,9 @@ var (
 	ErrConflict = errors.New("your Item already exist")
 	// ErrBadParamInput will throw if the given request-body or params is not valid
 	ErrBadParamInput = errors.New("given Param is not valid")
-	
+
 	ErrUserWithEmailAlreadyExist    = errors.New("user with provided email already exist")
 	ErrUserWithUsernameAlreadyExist = errors.New("user with provided username already exist")
+
+	ErrUnauthorized = errors.New("user provide wrong or expired credentials")
 )
