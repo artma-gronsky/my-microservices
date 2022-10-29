@@ -24,7 +24,8 @@ func NewUserUsecase(a domain.UserRepository, timeout time.Duration) domain.UserU
 }
 
 func (u *userUsecase) Store(ctx context.Context, createUserRequest *entities.User) (err error) {
-	//todo: validate request model
+
+	Validate(createUserRequest)
 
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()

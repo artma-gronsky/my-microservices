@@ -38,23 +38,10 @@ func NewUserHandler(mux *chi.Mux, us domain.UserUsecase, au domain.Authenticatio
 		au,
 	}
 
-	//todo: remove hello method
-	mux.Get("/", handler.hello)
 	mux.Post("/api/v1/users", handler.store)
 	mux.Post("/api/v1/users/token", handler.token)
 
 	mux.Mount("/swagger", httpSwagger.WrapHandler)
-}
-
-// Greet new user
-// @Summary Greetings method
-// @Description Greetings method (test method)
-// @Tags greetings
-// @Accept  json
-// @Produce  json
-// @Router / [get]
-func (h *userHandler) hello(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("Hello world!"))
 }
 
 type UserPayload struct {

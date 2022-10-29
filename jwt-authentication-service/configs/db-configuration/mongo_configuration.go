@@ -1,4 +1,3 @@
-// todo: move to it's own layer
 package db_configuration
 
 import (
@@ -40,7 +39,7 @@ func connectToMongo(mongoUrl, username, password string) (*mongo.Client, error) 
 		Password: password,
 	})
 
-	c, err := mongo.Connect(context.TODO(), clientOptions)
+	c, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {
 		log.Println("Error connection: ", err)
